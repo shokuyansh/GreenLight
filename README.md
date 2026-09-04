@@ -3,6 +3,8 @@ This project is an API server for movies.
 
 Last Page Read : 80
 
+## Features Implemented
+* Json Request and Response bodies with Validation 
 
 ## Routes
 | Method      | Routes           | Description  |
