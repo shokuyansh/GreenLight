@@ -11,7 +11,7 @@ Last Page Read : 167
 | ------------- |:------------- | ----- |
 | GET      | /v1/healthcheck | End point for checking health status of server |
 | GET      | /v1/movies/:id     |   End point for viewing a particular movie |
-|PUT       | /v1/movies/:id     | End point for updating a particular movie |
+|PATCH       | /v1/movies/:id     | End point for updating a particular movie |
 |DELETE       | /v1/movies/:id     | End point for deleting a particular movie |
 | POST | /v1/movies      | End point for creating a movie    |
 
