@@ -1,12 +1,14 @@
 ### GreenLight 
 This project is an API server for movies.
 
-Last Page Read : 235
+Last Page Read : 251
 
 ## Features Implemented
 * Json Request and Response bodies with Validation 
 * Pagination,Filtering and Sorting
 * Database Migrations
+* Rate limiting
+* MiddleWares including (panicRecovery etc)
 
 
 ## Routes
