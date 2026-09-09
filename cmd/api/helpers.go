@@ -6,10 +6,12 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"strconv"
 	"strings"
 
 	"github.com/julienschmidt/httprouter"
+	"github.com/shokuyansh/GreenLight/internal/validator"
 )
 
 type envelope map[string]any
@@ -91,4 +93,38 @@ func (app *application) readJSON(w http.ResponseWriter, r *http.Request, dst any
 		return errors.New("body must only contain a single JSON value")
 	}
 	return nil
+}
+
+func (app *application) readString(qs url.Values, key, default_value string) string {
+	s := qs.Get(key)
+
+	if s == "" {
+		return default_value
+	}
+	return s
+}
+
+func (app *application) readCSV(qs url.Values, key string, default_value []string) []string {
+	csv := qs.Get(key)
+
+	if csv == "" {
+		return default_value
+	}
+
+	return strings.Split(csv, ",")
+}
+
+func (app *application) readINT(qs url.Values, key string, default_value int, v *validator.Validator) int {
+	s := qs.Get(key)
+
+	if s == "" {
+		return default_value
+	}
+
+	i, err := strconv.Atoi(s)
+	if err != nil {
+		v.AddError(key, "must be an integer value")
+		return default_value
+	}
+	return i
 }
