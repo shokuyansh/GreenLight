@@ -6,10 +6,12 @@ import (
 	"flag"
 	"log/slog"
 	"os"
+	"sync"
 	"time"
 
 	_ "github.com/lib/pq"
 	"github.com/shokuyansh/GreenLight/internal/data"
+	"github.com/shokuyansh/GreenLight/internal/mailer"
 )
 
 const version = "1.0.0"
@@ -28,12 +30,21 @@ type config struct {
 		burst   int
 		enabled bool
 	}
+	smtp struct {
+		host     string
+		port     int
+		username string
+		password string
+		sender   string
+	}
 }
 
 type application struct {
 	config config
 	logger *slog.Logger
 	models data.Models
+	mailer *mailer.Mailer
+	wg     sync.WaitGroup
 }
 
 func main() {
@@ -41,13 +52,23 @@ func main() {
 
 	flag.IntVar(&cfg.port, "port", 4000, "API server Port")
 	flag.StringVar(&cfg.env, "env", "development", "Environment (development|staging|production)")
+
 	flag.StringVar(&cfg.db.dsn, "db-dsn", os.Getenv("GREENLIGHT_DB_DSN"), "PostgresSQL DSN")
+
 	flag.IntVar(&cfg.db.maxOpenConns, "db-max-open-conns", 25, "PostgresSQL max open connections")
 	flag.IntVar(&cfg.db.maxIdleConns, "db-max-idle-conns", 25, "PostgresSQL max idle connections")
 	flag.DurationVar(&cfg.db.maxIdleConnDuration, "db-max-idle-time", 15*time.Minute, "PostgresSQL max connection idle time")
+
 	flag.Float64Var(&cfg.limiter.rps, "limiter-rps", 2, "Rate limiter maximum requests per second")
 	flag.IntVar(&cfg.limiter.burst, "limiter-burst", 4, "Rate limiter maximum burst")
 	flag.BoolVar(&cfg.limiter.enabled, "limiter-enabled", true, "Enable rate limiter")
+
+	flag.StringVar(&cfg.smtp.host, "smtp-host", "sandbox.smtp.mailtrap.io", "SMTP Host")
+	flag.IntVar(&cfg.smtp.port, "smtp-port", 25, "SMTP Port")
+	flag.StringVar(&cfg.smtp.username, "smtp-username", "0ff663f6de5ff1", "SMTP username")
+	flag.StringVar(&cfg.smtp.password, "smtp-password", "41bb08c267d657", "SMTP password")
+	flag.StringVar(&cfg.smtp.sender, "smtp-sender", "Greenlight <no-reply@greenlight.anshmalgotra.net>", "SMTP sender")
+
 	flag.Parse()
 
 	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
@@ -61,10 +82,16 @@ func main() {
 
 	logger.Info("database connection pool established")
 
+	mailer, err := mailer.New(cfg.smtp.host, cfg.smtp.port, cfg.smtp.username, cfg.smtp.password, cfg.smtp.sender)
+	if err != nil {
+		logger.Error(err.Error())
+		os.Exit(1)
+	}
 	app := &application{
 		config: cfg,
 		logger: logger,
 		models: data.NewModels(db),
+		mailer: mailer,
 	}
 
 	err = app.serve()

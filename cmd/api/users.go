@@ -2,9 +2,10 @@ package main
 
 import (
 	"errors"
+	"net/http"
+
 	"github.com/shokuyansh/GreenLight/internal/data"
 	"github.com/shokuyansh/GreenLight/internal/validator"
-	"net/http"
 )
 
 func (app *application) registerUserHandler(w http.ResponseWriter, r *http.Request) {
@@ -44,9 +45,15 @@ func (app *application) registerUserHandler(w http.ResponseWriter, r *http.Reque
 		}
 		return
 	}
-
+	app.background(func() {
+		err = app.mailer.Send(user.Email, "user_welcome.tmpl", user)
+		if err != nil {
+			app.logger.Error(err.Error())
+		}
+	})
 	err = app.writeJSON(w, envelope{"user": user}, http.StatusCreated, nil)
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
 	}
+
 }
