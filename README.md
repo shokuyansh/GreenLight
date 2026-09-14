@@ -8,16 +8,18 @@ Last Page Read : 383
 * Pagination,Filtering and Sorting
 * Database Migrations
 * Rate limiting
-* MiddleWares including (panicRecovery etc)
+* MiddleWares including (panicRecovery, enableCORS, authentication,... etc)
 * GraceFul Shutdown
 * User Activation via activation tokens
 * Authentication via stateful auth tokens
 * Authorization via User Permissions 
+* Enabling Cross-Origin Requests 
 
 
 ## Routes
 | Method      | Routes           | Description  |
 | ------------- |:------------- | ----- |
+| GET | /debug/vars/ | Display Application Metrics
 | GET      | /v1/healthcheck | Check health status of server |
 | GET      | /v1/movies   |   View a list of movies |
 | GET      | /v1/movies/:id     |   View a particular movie |
