@@ -5,13 +5,13 @@ import (
 	"net/http"
 )
 
-func (app *application) logError(r *http.Request, err error) {
-	var (
-		method = r.Method
-		url    = r.URL.RequestURI()
-	)
-	app.logger.Error(err.Error(), method, url)
-}
+// func (app *application) logError(r *http.Request, err error) {
+// 	var (
+// 		method = r.Method
+// 		url    = r.URL.RequestURI()
+// 	)
+// 	app.logger.Error(err.Error(), method, url)
+// }
 
 func (app *application) errorResponse(w http.ResponseWriter, r *http.Request, message any, status int) {
 	errMsg := envelope{
