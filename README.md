@@ -1,5 +1,5 @@
 ### GreenLight 
-This project is an API server for movies.
+This project is a JSON API server for retrieving and managing movies.
 
 ## Features Implemented
 * Json Request and Response bodies with Validation 
