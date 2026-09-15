@@ -1,7 +1,7 @@
 ### GreenLight 
 This project is an API server for movies.
 
-Last Page Read : 383
+Last Page Read : 484
 
 ## Features Implemented
 * Json Request and Response bodies with Validation 
@@ -14,6 +14,10 @@ Last Page Read : 383
 * Authentication via stateful auth tokens
 * Authorization via User Permissions 
 * Enabling Cross-Origin Requests 
+* Automatic Versioning
+* Quality Control
+* Self-Contained Build
+
 
 
 ## Routes
